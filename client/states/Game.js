@@ -14,12 +14,23 @@ const Gamestate = {
         this.background = this.add.sprite(0, 0, 'backyard');
         this.items = this.add.group();
 
-        let positions;
         Tracker.autorun(() => {
-            positions = Positions.find();
+            let positions = Positions.find();
             console.log(`number of items: ${positions.count()}`);
             positions.forEach((pos) => {
-                this.items.create(pos.x, pos.y, pos.asset);
+                let id = pos._id._str ? pos._id._str : pos._id;
+                let item = this.items.filter((element) => {
+                    return element._id == id;
+                });
+                item = item.list[0];
+                console.log('item: ', item);
+                if (!item) {
+                    item = this.items.create(pos.x, pos.y, pos.asset);
+                    item._id = id;
+                } else {
+                    item.x = pos.x;
+                    item.y = pos.y;
+                }
             });
         });
     }
